@@ -1,13 +1,15 @@
 package by.itacademy.javaenterprise.lepnikau.app.dao.implement;
 
 import by.itacademy.javaenterprise.lepnikau.app.dao.MarkDAO;
-import by.itacademy.javaenterprise.lepnikau.app.dao.util.DAOServant;
+import by.itacademy.javaenterprise.lepnikau.app.dao.implement.util.DAOUtil;
 import by.itacademy.javaenterprise.lepnikau.app.entity.Mark;
-import by.itacademy.javaenterprise.lepnikau.app.connection.DSCreator;
 import by.itacademy.javaenterprise.lepnikau.app.sql.MarkSQLRequests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,9 +17,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class MarkDAOImpl implements MarkDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(MarkDAOImpl.class.getSimpleName());
+    private static final Logger log = LoggerFactory.getLogger(MarkDAOImpl.class);
+
+    private DataSource dataSource;
 
     @Override
     public Mark save(Mark mark) {
@@ -25,7 +30,7 @@ public class MarkDAOImpl implements MarkDAO {
         PreparedStatement stmt = null;
 
         try {
-            connection = DSCreator.getDataSource().getConnection();
+            connection = dataSource.getConnection();
             stmt = connection.prepareStatement(MarkSQLRequests.INSERT);
 
             stmt.setInt(1, mark.getStudentId());
@@ -38,8 +43,8 @@ public class MarkDAOImpl implements MarkDAO {
         } catch (SQLException e) {
             log.error(e.toString());
         } finally {
-            DAOServant.closePrepareStatement(stmt);
-            DAOServant.closeConnection(connection);
+            DAOUtil.closePrepareStatement(stmt);
+            DAOUtil.closeConnection(connection);
         }
         return null;
     }
@@ -48,28 +53,21 @@ public class MarkDAOImpl implements MarkDAO {
     public Mark get(int id) {
         Connection connection = null;
         PreparedStatement stmt = null;
-        Mark mark;
 
         try {
-            connection = DSCreator.getDataSource().getConnection();
+            connection = dataSource.getConnection();
             stmt = connection.prepareStatement(MarkSQLRequests.SELECT_BY_ID);
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                mark = new Mark();
-                mark.setId(rs.getInt("id"));
-                mark.setStudentId(rs.getInt("student_id"));
-                mark.setMark(rs.getInt("mark"));
-                mark.setSubjectId(rs.getInt("subject_id"));
-                mark.setDate(rs.getDate("date"));
-                return mark;
+                return createMarkEntity(rs);
             }
         } catch (SQLException e) {
             log.error(e.toString());
         } finally {
-            DAOServant.closePrepareStatement(stmt);
-            DAOServant.closeConnection(connection);
+            DAOUtil.closePrepareStatement(stmt);
+            DAOUtil.closeConnection(connection);
         }
         return null;
     }
@@ -81,27 +79,36 @@ public class MarkDAOImpl implements MarkDAO {
         PreparedStatement stmt = null;
 
         try {
-            connection = DSCreator.getDataSource().getConnection();
+            connection = dataSource.getConnection();
             stmt = connection.prepareStatement(MarkSQLRequests.SELECT_ALL);
 
             stmt.setInt(1, limit);
             stmt.setInt(2, offset);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Mark mark = new Mark();
-                mark.setId(rs.getInt("id"));
-                mark.setStudentId(rs.getInt("student_id"));
-                mark.setMark(rs.getInt("mark"));
-                mark.setSubjectId(rs.getInt("subject_id"));
-                mark.setDate(rs.getDate("date"));
-                marks.add(mark);
+                marks.add(createMarkEntity(rs));
             }
         } catch (SQLException e) {
             log.error(e.toString());
         } finally {
-            DAOServant.closePrepareStatement(stmt);
-            DAOServant.closeConnection(connection);
+            DAOUtil.closePrepareStatement(stmt);
+            DAOUtil.closeConnection(connection);
         }
         return marks;
+    }
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    private Mark createMarkEntity(ResultSet rs) throws SQLException {
+        Mark mark = new Mark();
+        mark.setId(rs.getInt("id"));
+        mark.setStudentId(rs.getInt("student_id"));
+        mark.setMark(rs.getInt("mark"));
+        mark.setSubjectId(rs.getInt("subject_id"));
+        mark.setDate(rs.getDate("date"));
+        return mark;
     }
 }

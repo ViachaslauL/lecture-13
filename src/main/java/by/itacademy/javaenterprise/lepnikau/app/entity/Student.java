@@ -3,7 +3,7 @@ package by.itacademy.javaenterprise.lepnikau.app.entity;
 import lombok.Data;
 
 @Data
-public class Student {
+public class Student{
     private int id;
     private String lastName;
     private String firstName;

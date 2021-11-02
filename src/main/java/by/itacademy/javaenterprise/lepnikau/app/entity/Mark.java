@@ -5,7 +5,7 @@ import lombok.Data;
 import java.sql.Date;
 
 @Data
-public class Mark {
+public class Mark{
     private int id;
     private int studentId;
     private int mark;

@@ -1,4 +1,4 @@
-package by.itacademy.javaenterprise.lepnikau.app.dao.util;
+package by.itacademy.javaenterprise.lepnikau.app.dao.implement.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,9 +7,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class DAOServant {
+public class DAOUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(DAOServant.class.getSimpleName());
+    private static final Logger log = LoggerFactory.getLogger(DAOUtil.class);
 
     public static void closePrepareStatement(PreparedStatement stmt) {
         if (stmt != null) {

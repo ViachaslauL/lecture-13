@@ -1,13 +1,15 @@
 package by.itacademy.javaenterprise.lepnikau.app.dao.implement;
 
 import by.itacademy.javaenterprise.lepnikau.app.dao.ParentDAO;
-import by.itacademy.javaenterprise.lepnikau.app.dao.util.DAOServant;
+import by.itacademy.javaenterprise.lepnikau.app.dao.implement.util.DAOUtil;
 import by.itacademy.javaenterprise.lepnikau.app.entity.Parent;
-import by.itacademy.javaenterprise.lepnikau.app.connection.DSCreator;
 import by.itacademy.javaenterprise.lepnikau.app.sql.ParentSQLRequests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,9 +17,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class ParentDAOImpl implements ParentDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(ParentDAOImpl.class.getSimpleName());
+    private static final Logger log = LoggerFactory.getLogger(ParentDAOImpl.class);
+
+    private DataSource dataSource;
 
     @Override
     public Parent save(Parent parent) {
@@ -25,7 +30,7 @@ public class ParentDAOImpl implements ParentDAO {
         PreparedStatement stmt = null;
 
         try {
-            connection = DSCreator.getDataSource().getConnection();
+            connection = dataSource.getConnection();
             stmt = connection.prepareStatement(ParentSQLRequests.INSERT);
 
             stmt.setInt(1, parent.getStudentId());
@@ -38,8 +43,8 @@ public class ParentDAOImpl implements ParentDAO {
         } catch (SQLException e) {
             log.error(e.toString());
         } finally {
-            DAOServant.closePrepareStatement(stmt);
-            DAOServant.closeConnection(connection);
+            DAOUtil.closePrepareStatement(stmt);
+            DAOUtil.closeConnection(connection);
         }
         return null;
     }
@@ -51,7 +56,7 @@ public class ParentDAOImpl implements ParentDAO {
         Parent parent;
 
         try {
-            connection = DSCreator.getDataSource().getConnection();
+            connection = dataSource.getConnection();
             stmt = connection.prepareStatement(ParentSQLRequests.SELECT_BY_ID);
 
             stmt.setInt(1, id);
@@ -68,8 +73,8 @@ public class ParentDAOImpl implements ParentDAO {
         } catch (SQLException e) {
             log.error(e.toString());
         } finally {
-            DAOServant.closePrepareStatement(stmt);
-            DAOServant.closeConnection(connection);
+            DAOUtil.closePrepareStatement(stmt);
+            DAOUtil.closeConnection(connection);
         }
         return null;
     }
@@ -81,7 +86,7 @@ public class ParentDAOImpl implements ParentDAO {
         PreparedStatement stmt = null;
 
         try {
-            connection = DSCreator.getDataSource().getConnection();
+            connection = dataSource.getConnection();
             stmt = connection.prepareStatement(ParentSQLRequests.SELECT_ALL);
 
             ResultSet rs = stmt.executeQuery();
@@ -99,9 +104,13 @@ public class ParentDAOImpl implements ParentDAO {
         } catch (SQLException e) {
             log.error(e.toString());
         } finally {
-            DAOServant.closePrepareStatement(stmt);
-            DAOServant.closeConnection(connection);
+            DAOUtil.closePrepareStatement(stmt);
+            DAOUtil.closeConnection(connection);
         }
         return parents;
+    }
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {        this.dataSource = dataSource;
     }
 }
