@@ -1,4 +1,5 @@
 Hometask lecture 13
+
 0. git repo
 1. base on hometask 12
 2. remove all xml configuration (+)
@@ -8,6 +9,7 @@ Hometask lecture 13
 6. inject by Qualified (-)
 
 Additional for 10
+
 7. Spring bean for DataSource (jdbc pool per student) (+)
 8. jdbc properties by @Value annotation (+)
 9. docker-compose file with your db (-)
