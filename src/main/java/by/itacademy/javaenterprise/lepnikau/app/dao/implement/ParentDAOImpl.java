@@ -31,6 +31,7 @@ public class ParentDAOImpl implements ParentDAO {
 
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             stmt = connection.prepareStatement(ParentSQLRequests.INSERT);
 
             stmt.setInt(1, parent.getStudentId());
@@ -38,10 +39,12 @@ public class ParentDAOImpl implements ParentDAO {
             stmt.setString(3, parent.getFirstName());
             stmt.setString(4, parent.getPatronymic());
             if (stmt.executeUpdate() > 0) {
+                connection.commit();
                 return parent;
             }
         } catch (SQLException e) {
             log.error(e.toString());
+            DAOUtil.rollbackConnection(connection);
         } finally {
             DAOUtil.closePrepareStatement(stmt);
             DAOUtil.closeConnection(connection);
@@ -80,7 +83,8 @@ public class ParentDAOImpl implements ParentDAO {
     }
 
     @Override
-    public List<Parent> getAllPageByPage(int limit, int offset) {
+    public List<Parent> getAllPageByPage(int pageSize, int pageNumber) {
+        int offset = pageSize * (pageNumber - 1);
         List<Parent> parents = new ArrayList<>();
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -90,7 +94,7 @@ public class ParentDAOImpl implements ParentDAO {
             stmt = connection.prepareStatement(ParentSQLRequests.SELECT_ALL);
 
             ResultSet rs = stmt.executeQuery();
-            stmt.setInt(1, limit);
+            stmt.setInt(1, pageSize);
             stmt.setInt(2, offset);
             while (rs.next()) {
                 Parent parent = new Parent();
@@ -111,6 +115,7 @@ public class ParentDAOImpl implements ParentDAO {
     }
 
     @Autowired
-    public void setDataSource(DataSource dataSource) {        this.dataSource = dataSource;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 }

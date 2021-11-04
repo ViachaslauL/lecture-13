@@ -22,23 +22,20 @@ public class App {
         MarkDAO markDAO = context.getBean(MarkDAOImpl.class);
 
 
-        getAllPageByPageTest(markDAO, 5, 0);
+        getAllPageByPageTest(markDAO, 5, 3);
     }
 
     private static void getAllPageByPageTest(MarkDAO dao, int limit, int offset) {
         StringBuilder sBuilder = new StringBuilder();
-        while (true) {
-            List<Mark> allPageByPage = dao.getAllPageByPage(limit, offset);
-            if (!allPageByPage.isEmpty()) {
-                for (Mark m : allPageByPage) {
-                    sBuilder.append("\n").append(m);
-                }
-                sBuilder.append("\n--Page--");
-                offset += limit;
-            } else {
-                break;
+        List<Mark> allPageByPage = dao.getAllPageByPage(limit, offset);
+
+        if (!allPageByPage.isEmpty()) {
+            for (Mark m : allPageByPage) {
+                sBuilder.append("\n").append(m);
             }
+            sBuilder.append("\n--Page--");
         }
+
         log.info(sBuilder.toString());
     }
 }

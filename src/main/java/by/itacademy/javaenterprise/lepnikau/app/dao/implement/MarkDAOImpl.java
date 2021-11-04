@@ -31,6 +31,7 @@ public class MarkDAOImpl implements MarkDAO {
 
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             stmt = connection.prepareStatement(MarkSQLRequests.INSERT);
 
             stmt.setInt(1, mark.getStudentId());
@@ -38,10 +39,12 @@ public class MarkDAOImpl implements MarkDAO {
             stmt.setInt(3, mark.getSubjectId());
             stmt.setDate(4, mark.getDate());
             if (stmt.executeUpdate() > 0) {
+                connection.commit();
                 return mark;
             }
         } catch (SQLException e) {
             log.error(e.toString());
+            DAOUtil.rollbackConnection(connection);
         } finally {
             DAOUtil.closePrepareStatement(stmt);
             DAOUtil.closeConnection(connection);
@@ -73,7 +76,8 @@ public class MarkDAOImpl implements MarkDAO {
     }
 
     @Override
-    public List<Mark> getAllPageByPage(int limit, int offset) {
+    public List<Mark> getAllPageByPage(int pageSize, int pageNumber) {
+        int offset = pageSize * (pageNumber - 1);
         List<Mark> marks = new ArrayList<>();
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -82,7 +86,7 @@ public class MarkDAOImpl implements MarkDAO {
             connection = dataSource.getConnection();
             stmt = connection.prepareStatement(MarkSQLRequests.SELECT_ALL);
 
-            stmt.setInt(1, limit);
+            stmt.setInt(1, pageSize);
             stmt.setInt(2, offset);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

@@ -4,9 +4,9 @@ Hometask lecture 13
 1. base on hometask 12
 2. remove all xml configuration (+)
 3. All beans to annotation (+)
-4. at least 2 beans of the same type (interface) (-)
+4. at least 2 beans of the same type (interface) (+)
 5. inject by Autowired (+)
-6. inject by Qualified (-)
+6. inject by Qualified (+)
 
 Additional for 10
 

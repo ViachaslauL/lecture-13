@@ -31,6 +31,7 @@ public class StudentDAOImpl implements StudentDAO {
 
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             stmt = connection.prepareStatement(StudentSQLRequests.INSERT);
 
             stmt.setString(1, student.getLastName());
@@ -38,10 +39,12 @@ public class StudentDAOImpl implements StudentDAO {
             stmt.setString(3, student.getPatronymic());
             stmt.setInt(4, student.getClassId());
             if (stmt.executeUpdate() > 0) {
+                connection.commit();
                 return student;
             }
         } catch (SQLException e) {
             log.error(e.toString());
+            DAOUtil.rollbackConnection(connection);
         } finally {
             DAOUtil.closePrepareStatement(stmt);
             DAOUtil.closeConnection(connection);
@@ -73,7 +76,8 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
-    public List<Student> getAllPageByPage(int limit, int offset) {
+    public List<Student> getAllPageByPage(int pageSize, int pageNumber) {
+        int offset = pageSize * (pageNumber - 1);
         List<Student> students = new ArrayList<>();
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -83,7 +87,7 @@ public class StudentDAOImpl implements StudentDAO {
             stmt = connection.prepareStatement(StudentSQLRequests.SELECT_ALL);
 
             ResultSet rs = stmt.executeQuery();
-            stmt.setInt(1, limit);
+            stmt.setInt(1, pageSize);
             stmt.setInt(2, offset);
             while (rs.next()) {
                 students.add(createStudentEntity(rs));
