@@ -61,7 +61,7 @@ public class SchoolDiaryConfig {
     @Bean
     public DataSource dataSource(
             @Autowired
-            @Qualifier("hikariDataSource") DataSource dataSource
+            @Qualifier("basicDataSource") DataSource dataSource
     ) {
         return dataSource;
     }
