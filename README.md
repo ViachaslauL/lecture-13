@@ -13,4 +13,4 @@ Additional for 10
 7. Spring bean for DataSource (jdbc pool per student) (+)
 8. jdbc properties by @Value annotation (+)
 9. docker-compose file with your db (-)
-10. schema to flyway/liquibase (per student) (-)
+10. schema to flyway/liquibase (per student) (+)
