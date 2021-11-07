@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `marks`
     KEY `subject_id` (`subject_id`),
     KEY `student_id` (`student_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 32
+  AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4;
 
 ALTER TABLE `marks`

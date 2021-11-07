@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS `classes`(
     `class_code` varchar(6) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 32
+  AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4;

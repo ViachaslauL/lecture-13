@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `teachers`
     PRIMARY KEY (`id`),
     KEY `subject_id` (`subject_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 32
+  AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4;
 
 ALTER TABLE `teachers`

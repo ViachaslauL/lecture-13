@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `students`
     KEY `class_id` (`class_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
-  AUTO_INCREMENT = 32;
+  AUTO_INCREMENT = 0;
 
 ALTER TABLE `students`
     ADD CONSTRAINT `students_ibfk_4`
